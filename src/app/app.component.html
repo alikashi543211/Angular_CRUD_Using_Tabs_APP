@@ -9,8 +9,9 @@
 
                         <div class="row mb-3">
                             <div class="form-group col">
-                                <label for="title">Title</label>
-                                <select id="title" class="form-control" formControlName="title" [ngClass]="{ 'is-invalid' : submitted && addForm.controls['title'].errors }">
+                                <label>Title</label>
+                                <select class="form-control" formControlName="title"
+                                    [ngClass]="{ 'is-invalid' : submitted && ctrl['title'].errors }">
                                     <option value="">--Select Title--</option>
                                     <option value="Mr">Mr</option>
                                     <option value="Mrs">Mrs</option>
@@ -18,50 +19,108 @@
                                     <option value="Ms">Ms</option>
                                 </select>
                                 <div class="invalid-feedback">
-                                    <div *ngIf="submitted && addForm.controls['title'].errors['required']">
+                                    <div *ngIf="submitted && ctrl['title'].errors['required']">
                                         Title is required !!
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-group col-5">
-                                <label for="firstName">First Name</label>
-                                <input type="text" id="firstName" class="form-control" formControlName="firstName">
+                                <label>First Name</label>
+                                <input type="text" class="form-control" formControlName="firstName"
+                                    [ngClass]="{ 'is-invalid' : submitted && ctrl['firstName'].errors }">
+                                <div class="invalid-feedback">
+                                    <div *ngIf="submitted && ctrl['firstName'].errors['required']">
+                                        First Name is required !!
+                                    </div>
+                                    <div *ngIf="submitted && ctrl['firstName'].errors['minlength']">
+                                        First Name should be min 3 char long !!
+                                    </div>
+                                    <div *ngIf="submitted && ctrl['firstName'].errors['maxlength']">
+                                        First Name should be max 10 char long !!
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="form-group col-5">
-                                <label for="lastName">Last Name</label>
-                                <input type="text" id="lastName" class="form-control" formControlName="lastName">
+                                <label>Last Name</label>
+                                <input type="text" class="form-control" formControlName="lastName" [ngClass]="{ 'is-invalid' : submitted && ctrl['lastName'].errors }">
+                                <div class="invalid-feedback">
+                                    <div *ngIf="ctrl['lastName'].errors['required']">
+                                        Last Name is required !!
+                                    </div>
+                                    <div *ngIf="ctrl['lastName'].errors['minlength']">
+                                        Last Name should be min 3 char long !!
+                                    </div>
+                                    <div *ngIf="ctrl['lastName'].errors['maxlength']">
+                                        Last Name should be max 10 char long !!
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <div class="form-group col-5">
-                                <label for="dob">Date of Birth</label>
-                                <input type="date" class="form-control" formControlName="dob">
+                                <label>Date of Birth</label>
+                                <input type="date" class="form-control" formControlName="dob" [ngClass]="{ 'is-invalid' : submitted && ctrl['dob'].errors }">
+                                <div class="invalid-feedback">
+                                    <div *ngIf="ctrl['dob'].errors['required']">
+                                        Date of Birth is required !!
+                                    </div>
+                                    <div *ngIf="ctrl['dob'].errors['pattern']">
+                                        Date of Birth must be a valid datein the format YYYY-MM-dd !!
+                                    </div>
+                                </div>
                             </div>
                             <div class="form-group col-5">
-                                <label for="email">Email</label>
-                                <input type="text" class="form-control" formControlName="email">
+                                <label>Email</label>
+                                <input type="text" class="form-control" formControlName="email" [ngClass]="{ 'is-invalid' : submitted && ctrl['email'].errors }">
+                                <div class="invalid-feedback">
+                                    <div *ngIf="ctrl['email'].errors['required']">
+                                        Email is required !!
+                                    </div>
+                                    <div *ngIf="ctrl['email'].errors['email']">
+                                        Email must be a valid email address !!
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <div class="form-group col-5">
-                                <label for="password">Password</label>
-                                <input type="password" id="password" class="form-control" formControlName="password">
+                                <label>Password</label>
+                                <input type="password" class="form-control" formControlName="password" [ngClass]="{ 'is-invalid' : submitted && ctrl['password'].errors }">
+                                <div class="invalid-feedback">
+                                    <div *ngIf="ctrl['password'].errors['required']">
+                                        Password is required !!
+                                    </div>
+                                    <div *ngIf="ctrl['password'].errors['minlength']">
+                                        Password must be atleast 6 char long !!
+                                    </div>
+                                </div>
                             </div>
                             <div class="form-group col-5">
-                                <label for="confirmPassword">Confirm Password</label>
-                                <input type="password" id="confirmPassword" class="form-control"
-                                    formControlName="confirmPassword">
+                                <label>Confirm Password</label>
+                                <input type="password" class="form-control"
+                                    formControlName="confirmPassword" [ngClass]="{ 'is-invalid' : submitted && ctrl['confirmPassword'].errors }">
+                                    <div class="invalid-feedback">
+                                        <div *ngIf="ctrl['confirmPassword'].errors['required']">
+                                            Confirm Password is required !!
+                                        </div>
+                                    </div>
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <div class="form-group col form-check">
-                                <input type="checkbox" class="form-check-input" formControlName="acceptTerms" id="acceptTerms">
+                                <input type="checkbox" class="form-check-input" formControlName="acceptTerms"
+                                    id="acceptTerms" [ngClass]="{ 'is-invalid' : submitted && ctrl['acceptTerms'].errors }">
                                 <label for="acceptTerms" class="form-check-label">Accept Terms & Conditions</label>
+                                <div class="invalid-feedback">
+                                    <div *ngIf="ctrl['acceptTerms'].errors['required']">
+                                        Accept Terms & Conditions is required !!
+                                    </div>
+                                </div>
                             </div>
                         </div>
 

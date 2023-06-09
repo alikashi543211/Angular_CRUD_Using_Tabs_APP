@@ -35,7 +35,7 @@ export class AppComponent implements OnInit {
         });
     }
 
-    get f(){
+    get ctrl(){
         return this.addForm.controls;
     }
 
@@ -50,5 +50,6 @@ export class AppComponent implements OnInit {
 
     resetForm() {
         alert("resetForm");
+        this.addForm.reset();
     }
 }
