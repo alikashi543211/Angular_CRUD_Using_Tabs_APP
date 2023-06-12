@@ -1,7 +1,11 @@
+import { DBOperation } from './common/db-operation';
 import { User } from './common/user.interface';
 import { UserService } from './common/user.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
+import Swal from 'sweetalert2';
+import { MustMatch } from './common/must.match.validator';
 
 @Component({
     selector: 'app-root',
@@ -14,8 +18,12 @@ export class AppComponent implements OnInit {
     addForm: FormGroup;
     submitted: boolean = false;
     users: User[] = [];
-    constructor(private _userService: UserService) {
+    buttonTxt: string;
+    dbops: DBOperation;
 
+
+    @ViewChild('nav') elFile: any;
+    constructor(private _userService: UserService, private _toastr: ToastrService) {
     }
 
     ngOnInit() {
@@ -24,6 +32,8 @@ export class AppComponent implements OnInit {
     }
 
     setFormState() {
+        this.buttonTxt = "Save";
+        this.dbops = DBOperation.add;
         this.addForm = new FormGroup({
             id: new FormControl(0),
             title: new FormControl('', Validators.required),
@@ -35,7 +45,9 @@ export class AppComponent implements OnInit {
             password: new FormControl('', Validators.compose([Validators.required, Validators.minLength(6)])),
             confirmPassword: new FormControl('', Validators.required),
             acceptTerms: new FormControl(false, Validators.requiredTrue)
-        });
+        },
+            MustMatch('password', 'confirmPassword'),
+        );
     }
 
     get ctrl() {
@@ -44,15 +56,34 @@ export class AppComponent implements OnInit {
 
     register() {
         this.submitted = true;
+        console.log(this.addForm.value);
         if (this.addForm.invalid) {
-            alert("Validation failed");
-        } else {
-            alert("Validation Successfull");
+            return;
+        }
+        switch (this.dbops) {
+            case DBOperation.add:
+                this._userService.addUser(this.addForm.value).subscribe(res => {
+                    this._toastr.success("User Added !!", "User Registration");
+                    this.getUsers();
+                    this.resetForm();
+                    this.elFile.select('viewtab');
+                })
+                break;
+            case DBOperation.update:
+                this._userService.updateUser(this.addForm.value).subscribe(res => {
+                    this._toastr.success("User Updated !!", "User Registration");
+                    this.getUsers();
+                    this.resetForm();
+                    this.elFile.select('viewtab');
+                })
+                break;
         }
     }
 
     resetForm() {
-        alert("resetForm");
+        this.dbops = DBOperation.add;
+        this.buttonTxt = 'Save';
+        this.submitted = false;
         this.addForm.reset();
     }
 
@@ -63,11 +94,63 @@ export class AppComponent implements OnInit {
         });
     }
 
-    onEdit() {
+    onEdit(userId: number) {
+        this.dbops = DBOperation.update;
+        this.buttonTxt = 'Update';
 
+        let user = this.users.find((u: User) => u.id === userId);
+        this.addForm.patchValue(user);
+        this.elFile.select('addtab');
+
+        this.addForm.get('password').setValue('');
+        this.addForm.get('confirmPassword').setValue('');
+        this.addForm.get('acceptTerms').setValue(false);
     }
 
-    onDelete() {
+    onDelete(userId: number) {
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: 'btn btn-success',
+                cancelButton: 'btn btn-danger'
+            },
+            buttonsStyling: false
+        })
 
+        swalWithBootstrapButtons.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this._userService.deleteUser(userId).subscribe(res => {
+                    this._toastr.success("Record Deleted !!", "User Registration");
+                    // swalWithBootstrapButtons.fire(
+                    //     'Deleted!',
+                    //     'Your record has been deleted.',
+                    //     'success'
+                    // )
+                    this.getUsers();
+                });
+
+            } else if (
+                /* Read more about handling dismissals below */
+                result.dismiss === Swal.DismissReason.cancel
+            ) {
+                swalWithBootstrapButtons.fire(
+                    'Cancelled',
+                    'Your record is safe :)',
+                    'error'
+                )
+            }
+        })
     }
+
+    tabChange() {
+        this.resetForm();
+    }
+
 }
