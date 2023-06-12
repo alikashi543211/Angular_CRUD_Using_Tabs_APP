@@ -1,3 +1,5 @@
+import { User } from './common/user.interface';
+import { UserService } from './common/user.service';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
@@ -11,13 +13,14 @@ export class AppComponent implements OnInit {
     // addForm: FormGroup = new FormGroup({});
     addForm: FormGroup;
     submitted: boolean = false;
-
-    constructor() {
+    users: User[] = [];
+    constructor(private _userService: UserService) {
 
     }
 
     ngOnInit() {
         this.setFormState();
+        this.getUsers();
     }
 
     setFormState() {
@@ -35,7 +38,7 @@ export class AppComponent implements OnInit {
         });
     }
 
-    get ctrl(){
+    get ctrl() {
         return this.addForm.controls;
     }
 
@@ -51,5 +54,20 @@ export class AppComponent implements OnInit {
     resetForm() {
         alert("resetForm");
         this.addForm.reset();
+    }
+
+    getUsers() {
+        this._userService.getAllUsers().subscribe((res: User[]) => {
+            this.users = res;
+            // console.log(this.users);
+        });
+    }
+
+    onEdit() {
+
+    }
+
+    onDelete() {
+
     }
 }
